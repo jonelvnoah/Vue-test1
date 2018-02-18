@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>购买清单</title>
+    <link rel="stylesheet" href="./static/css/main.css">
+    <link rel="stylesheet" href="./static/css/bootstrap.min.css">
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="page-header">
+                <h2 class="myCash">我的余额：HK${{ myBalance.toFixed(2) }}</h2>
+            </div>
+            <div class="row">
+                <div class="wishList col-md">
+                <h3>愿望清单：</h3>
+                <div class="gameItem" v-for="item in wishList">
+                    <img :src="item.img">
+                    <div class="gameInfo">
+                        <h2 class="name">{{ item.name }}</h2>
+                        <p class="price">HK$ {{ item.price.toFixed(2) }}</p>
+                        <button class="btn btn-danger btn-lg" @click="buyGame(item.id)">立即购买</button>
+                    </div>
+                </div>
+                </div>
+
+                <div class="purchasedGames col-md">
+                    <h3>已入游戏：</h3>
+                    <div class="gameItem" v-for="item in myGames">
+                        <img :src="item.img">
+                        <div class="gameInfo">
+                            <h2 class="name">{{ item.name }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./static/js/vue.js"></script>
+    <script src="./static/js/gamesDB.js"></script>
+
+    <script type="text/javascript">
+        let app = new Vue ({
+           el: '#app',
+           data: {
+               games: games,
+               myCash: 5000
+           },
+            methods: {
+                buyGame: function (id) {
+                    this.games[id].purchased = true;
+                }
+               
+            },
+            computed: {
+               wishList: function () {
+                   return this.games.filter(function (game) {
+                       return !game.purchased
+                   })
+               },
+                myGames: function () {
+                    return this.games.filter(function (game) {
+                        return game.purchased
+                    })
+                },
+                myBalance: function () {
+                    let sum = 0;
+                    this.myGames.forEach(function (game,index) {
+                        sum += game.price
+                    })
+                    return this.myCash - sum;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
